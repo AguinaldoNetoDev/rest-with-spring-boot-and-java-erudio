@@ -1,7 +1,7 @@
 package com.github.aguinaldoNetoDev.exception.handler;
 
 import com.github.aguinaldoNetoDev.exception.ExceptionResponse;
-import com.github.aguinaldoNetoDev.exception.UnsupportedMathOperationException;
+import com.github.aguinaldoNetoDev.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,13 +26,13 @@ public class CustomizedEntityResponseHandler extends ResponseEntityExceptionHand
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(UnsupportedMathOperationException.class)
-    public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception exception, WebRequest request) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleNotFoundExceptions(Exception exception, WebRequest request) {
         ExceptionResponse response = new ExceptionResponse(
                 new Date(),
                 exception.getMessage(),
                 request.getDescription(false)
         );
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }
