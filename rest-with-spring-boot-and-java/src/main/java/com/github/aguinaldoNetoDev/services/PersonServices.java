@@ -1,15 +1,15 @@
 package com.github.aguinaldoNetoDev.services;
 
-import com.github.aguinaldoNetoDev.data.dto.PersonDTO;
+import com.github.aguinaldoNetoDev.data.dto.v1.PersonDTO;
+import com.github.aguinaldoNetoDev.data.dto.v2.PersonDTOV2;
 import com.github.aguinaldoNetoDev.exception.ResourceNotFoundException;
-import com.github.aguinaldoNetoDev.mapper.ObjectMapper;
+import com.github.aguinaldoNetoDev.mapper.custom.PersonMapper;
 import com.github.aguinaldoNetoDev.model.Person;
 import com.github.aguinaldoNetoDev.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 import static com.github.aguinaldoNetoDev.mapper.ObjectMapper.parseListObjects;
@@ -23,10 +23,12 @@ public class PersonServices {
     @Autowired
     private PersonRepository repository;
 
-    public PersonDTO create(PersonDTO dto) {
+    @Autowired
+    private PersonMapper converter;
+
+    public PersonDTO createV2(PersonDTO dto) {
         logger.info("Save person");
 
-        // parametro 1: passa o DTO para converter em uma entidade, parametro 2: passa o tipo da entidade
         var entity = parseObject(dto, Person.class);
 
         return parseObject(repository.save(entity), PersonDTO.class);
@@ -72,4 +74,15 @@ public class PersonServices {
 
         repository.delete(entity);
     }
+
+    /*SERVICE V2
+
+    public PersonDTOV2 createV2(PersonDTOV2 dtoV2) {
+        logger.info("Save person");
+
+        Person entity = converter.convertDTOToEntity(dtoV2);
+
+        return converter.convertEntityToDTO(repository.save(entity));
+    }
+     */
 }

@@ -1,6 +1,6 @@
 package com.github.aguinaldoNetoDev.mocks;
 
-import com.github.aguinaldoNetoDev.data.dto.PersonDTO;
+import com.github.aguinaldoNetoDev.data.dto.v1.PersonDTO;
 import com.github.aguinaldoNetoDev.model.Person;
 
 import java.util.ArrayList;

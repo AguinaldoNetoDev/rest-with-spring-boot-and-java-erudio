@@ -7,10 +7,10 @@ spring:
     password: root
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: false
     open-in-view: false
 logging:
   level:
-    root: WARN # root é o log global da aplicação.
+    root: INFO # root é o log global da aplicação.
     #com.github.aguinaldoNetoDev: TRACE # posso definir um tipo de log para um determinado pacote. Obs: INFO É O DEFAULT

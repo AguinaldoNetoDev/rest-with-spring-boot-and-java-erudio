@@ -1,6 +1,7 @@
 package com.github.aguinaldoNetoDev.controllers;
 
-import com.github.aguinaldoNetoDev.data.dto.PersonDTO;
+import com.github.aguinaldoNetoDev.data.dto.v1.PersonDTO;
+import com.github.aguinaldoNetoDev.data.dto.v2.PersonDTOV2;
 import com.github.aguinaldoNetoDev.services.PersonServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -10,17 +11,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/person/v1")
 public class PersonController {
 
     @Autowired
     private PersonServices service;
 
+    /*ENDPOINTS V1 */
+
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public PersonDTO create(@RequestBody PersonDTO person) {
-        return service.create(person);
+    public PersonDTO createV2(@RequestBody PersonDTO person) {
+        return service.createV2(person);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,4 +48,15 @@ public class PersonController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    /*ENDPOINTS V2
+
+    @PostMapping(
+            value = "/v2",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public PersonDTOV2 createV2(@RequestBody PersonDTOV2 person) {
+        return service.createV2(person);
+    }
+     */
 }
