@@ -1,7 +1,7 @@
 package com.github.aguinaldoNetoDev.services;
 
+import com.github.aguinaldoNetoDev.controllers.PersonController;
 import com.github.aguinaldoNetoDev.data.dto.v1.PersonDTO;
-import com.github.aguinaldoNetoDev.data.dto.v2.PersonDTOV2;
 import com.github.aguinaldoNetoDev.exception.ResourceNotFoundException;
 import com.github.aguinaldoNetoDev.mapper.custom.PersonMapper;
 import com.github.aguinaldoNetoDev.model.Person;
@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 
 import static com.github.aguinaldoNetoDev.mapper.ObjectMapper.parseListObjects;
 import static com.github.aguinaldoNetoDev.mapper.ObjectMapper.parseObject;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class PersonServices {
@@ -26,12 +28,16 @@ public class PersonServices {
     @Autowired
     private PersonMapper converter;
 
-    public PersonDTO createV2(PersonDTO dto) {
+    public PersonDTO createV2(PersonDTO personDTO) {
         logger.info("Save person");
 
-        var entity = parseObject(dto, Person.class);
+        var entity = parseObject(personDTO, Person.class);
 
-        return parseObject(repository.save(entity), PersonDTO.class);
+        var dto = parseObject(repository.save(entity), PersonDTO.class);
+
+        addHateoasLinks(dto);
+
+        return dto;
     }
 
     public PersonDTO findById(Long id) {
@@ -40,29 +46,41 @@ public class PersonServices {
         var entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this id."));
 
-        return parseObject(entity, PersonDTO.class);
+        var dto = parseObject(entity, PersonDTO.class);
+
+        addHateoasLinks(dto);
+
+        return dto;
     }
 
     public List<PersonDTO> findAll() {
         logger.info("Finding all people");
 
-        // parametro 1: busca os dados na entidade, parametro 2: converte de entidade para DTO
-        return parseListObjects(repository.findAll(), PersonDTO.class);
+        var persons = parseListObjects(repository.findAll(), PersonDTO.class);
+
+        persons.forEach(this::addHateoasLinks);
+
+        return persons;
+
     }
 
-    public PersonDTO update(PersonDTO dto) {
+    public PersonDTO update(PersonDTO personDTO) {
         logger.info("Finding one person");
 
-        Person entity = repository.findById(dto.getId())
+        Person entity = repository.findById(personDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this id."));
 
         logger.info("Updating founded person");
-        entity.setFirstName(dto.getFirstName());
-        entity.setLastName(dto.getLastName());
-        entity.setAddress(dto.getAddress());
-        entity.setGender(dto.getGender());
+        entity.setFirstName(personDTO.getFirstName());
+        entity.setLastName(personDTO.getLastName());
+        entity.setAddress(personDTO.getAddress());
+        entity.setGender(personDTO.getGender());
 
-        return parseObject(repository.save(entity), PersonDTO.class);
+        var dto = parseObject(repository.save(entity), PersonDTO.class);
+
+        addHateoasLinks(dto);
+
+        return dto;
     }
 
     public void delete(Long id) {
@@ -73,6 +91,33 @@ public class PersonServices {
         logger.info("Deleting one person");
 
         repository.delete(entity);
+    }
+
+    private void addHateoasLinks(PersonDTO dto) {
+        dto.add(linkTo(methodOn(PersonController.class)
+                .create(dto))
+                .withRel("create")
+                .withType("POST"));
+
+        dto.add(linkTo(methodOn(PersonController.class)
+                .findById(dto.getId()))
+                .withSelfRel()
+                .withType("GET"));
+
+        dto.add(linkTo(methodOn(PersonController.class)
+                .findAll())
+                .withRel("findAll")
+                .withType("GET"));
+
+        dto.add(linkTo(methodOn(PersonController.class)
+                .update(dto))
+                .withRel("update")
+                .withType("PUT"));
+
+        dto.add(linkTo(methodOn(PersonController.class)
+                .deleteById(dto.getId()))
+                .withRel("delete")
+                .withType("DELETE"));
     }
 
     /*SERVICE V2

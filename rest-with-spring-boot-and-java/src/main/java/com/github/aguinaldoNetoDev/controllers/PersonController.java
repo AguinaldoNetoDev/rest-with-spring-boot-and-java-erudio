@@ -29,7 +29,7 @@ public class PersonController {
                     MediaType.APPLICATION_XML_VALUE,
                     MediaType.APPLICATION_YAML_VALUE
             })
-    public PersonDTO createV2(@RequestBody PersonDTO person) {
+    public PersonDTO create(@RequestBody PersonDTO person) {
         return service.createV2(person);
     }
 
