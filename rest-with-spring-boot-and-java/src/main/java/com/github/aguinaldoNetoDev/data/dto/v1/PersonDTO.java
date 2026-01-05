@@ -1,6 +1,5 @@
 package com.github.aguinaldoNetoDev.data.dto.v1;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.aguinaldoNetoDev.serializer.GenderSerializer;
@@ -9,7 +8,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-@JsonFilter("PersonFilter")
 public class PersonDTO implements Serializable {
 
     @Serial
